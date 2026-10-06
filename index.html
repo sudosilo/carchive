@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>CARCHIVE</title>
-<meta name="build" content="CARCHIVE-BUILD-SIX">
+<meta name="build" content="CARCHIVE-BUILD-SEVEN">
 <style>
 :root{
   --paper:#f3efe6;--card:#fffdf7;--ink:#1e1b15;--sub:#6a6457;--line:#d6cfbe;--soft:#e8e2d3;
@@ -72,7 +72,7 @@ html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);f
 .hc .n{font-size:12.5px;font-weight:700;line-height:1.15;margin:1px 0 2px;}
 .hc .s{font-family:var(--disp);font-weight:700;font-size:13px;}
 .hc .x{font-size:10px;line-height:1.25;color:var(--sub);margin-top:2px;}
-#ov{display:none;position:fixed;inset:0;background:rgba(243,239,230,.72);z-index:50;align-items:flex-end;justify-content:center;}
+#ov{display:none;position:fixed;inset:0;background:rgba(243,239,230,.72);z-index:120;align-items:flex-end;justify-content:center;}
 #ov.show{display:flex;}
 #sheet{width:100%;max-width:480px;max-height:82dvh;overflow-y:auto;background:var(--card);border:2px solid var(--ink);border-bottom:none;border-radius:12px 12px 0 0;padding:14px 14px 22px;box-shadow:0 -6px 24px rgba(30,27,21,.18);}
 #sh-title{font-family:var(--disp);font-weight:700;font-size:23px;line-height:1.1;}
@@ -103,6 +103,29 @@ html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);f
 #rectable td.w{color:var(--you);font-weight:700;}#rectable td.l{color:var(--rival);font-weight:700;}
 #rectable td.sc{font-family:var(--disp);font-weight:700;font-size:15px;}
 #norecs{font-size:14px;color:var(--sub);padding:8px 0;}
+#decksum{font-size:13px;color:var(--sub);text-align:center;margin-top:6px;}
+#deckscr{display:none;position:fixed;inset:0;z-index:100;background:var(--paper);flex-direction:column;max-width:480px;margin:0 auto;}
+#deckscr.show{display:flex;}
+#deckhead{display:flex;align-items:baseline;gap:10px;padding:10px 12px;background:var(--ink);color:var(--paper);}
+#decktitle{font-family:var(--disp);font-weight:700;font-style:italic;font-size:22px;letter-spacing:2px;}
+#deckcount{margin-left:auto;font-family:var(--disp);font-weight:700;font-size:15px;}
+#deckcount.ok{color:#9be0a8;}#deckcount.bad{color:#ffb38f;}
+#deckfilters{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;scrollbar-width:none;flex-shrink:0;}
+#deckfilters::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;font-family:var(--disp);font-weight:700;font-size:14px;padding:6px 12px;border-radius:16px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);}
+.chip.on{background:var(--ink);color:var(--paper);}
+#decklist{flex:1;overflow-y:auto;padding:0 10px 10px;}
+.drow{display:flex;align-items:center;gap:6px;padding:7px 8px;margin-bottom:5px;border-radius:6px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);}
+.drow.monster{border-left-color:var(--mon);}.drow.spell{border-left-color:var(--spell);}.drow.trap{border-left-color:var(--trap);}
+.drow.has{background:#fff8e2;border-color:var(--ink);}
+.dinfo{flex:1;min-width:0;}
+.dn{font-size:14px;font-weight:700;}
+.dm{font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm{width:38px;height:38px;font-size:22px;font-weight:700;border-radius:6px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);flex-shrink:0;}
+.pm:disabled{opacity:.25;}
+.dc{width:22px;text-align:center;font-family:var(--disp);font-weight:700;font-size:20px;flex-shrink:0;}
+#deckfoot{display:flex;gap:6px;padding:8px 10px;border-top:2px solid var(--ink);background:var(--soft);}
+#deckfoot .btn{font-size:14px;padding:11px 2px;}
 </style>
 </head>
 <body>
@@ -130,10 +153,18 @@ html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);f
   <label for="namein">Driver name, up to five characters</label>
   <input id="namein" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false">
   <button class="btn go" id="b-start">Start Duel</button>
+  <button class="btn" id="b-deck">Build Deck</button>
+  <div id="decksum"></div>
   <div id="recs"><h2>Duel Records</h2><div id="norecs">No duels on record yet.</div>
     <table id="rectable"><thead><tr><th>Driver</th><th>Result</th><th>Score</th><th>Attacks</th><th>Dealt</th><th>Taken</th><th>Turns</th></tr></thead><tbody id="recbody"></tbody></table>
   </div>
 </div></div>
+<div id="deckscr">
+  <div id="deckhead"><div id="decktitle">Deck Builder</div><div id="deckcount"></div></div>
+  <div id="deckfilters"></div>
+  <div id="decklist"></div>
+  <div id="deckfoot"><button class="btn" id="b-deckstarter">Starter</button><button class="btn" id="b-deckclear">Clear</button><button class="btn" id="b-deckcancel">Cancel</button><button class="btn go" id="b-decksave">Save</button></div>
+</div>
 <div id="ov"><div id="sheet"><div id="sh-title"></div><div id="sh-sub"></div><div id="sh-stats"></div><div id="sh-body"></div><div id="sh-btns"></div></div></div>
 <script>
 "use strict";
@@ -447,6 +478,92 @@ const DB = {
   "Flat Tire": {k:"trap", sub:"Normal", when:["attack"],
     async resolve(side, t, ev){ ev.negated = true; if(onField(ev.attacker)) ev.attacker.pos = "def"; log("The attack is negated. " + ev.attacker.name + " limps into Defense Position.", "trp"); },
     text:"When an opponent's monster declares an attack: negate the attack and switch that monster to Defense Position."},
+
+  "Bannock Squarebody": {k:"monster", atk:1600, def:1800, lv:4, region:"Domestic", make:"Bannock", timing:"chain",
+    spec:"Half ton pickup with a pushrod V8 on a timing chain. Parts are on the shelf in every town.",
+    text:"Old farm truck. Slow, square and still running."},
+  "Swerve Hellion": {k:"monster", atk:2400, def:1500, lv:6, region:"Domestic", make:"Swerve", timing:"chain", burn:500,
+    spec:"Supercharged pushrod V8 on a timing chain. Rear tires are a wear item.",
+    text:"One tribute. When it destroys a monster by battle, the opponent takes 500 damage."},
+  "Regent Fox Coupe": {k:"monster", atk:1300, def:1000, lv:3, region:"Domestic", make:"Regent", timing:"chain", boost:true,
+    spec:"Light coupe with a small pushrod V8 on a timing chain. The aftermarket for it never ends and it takes boost well.",
+    text:"Cheap, light and one catalog order away from fast."},
+  "Tanuki Tofu Runner": {k:"monster", atk:1200, def:1000, lv:3, region:"Import", make:"Tanuki", timing:"belt-free", multi:2, second:{when:"before", atk:-300, turns:0},
+    spec:"Light rear drive hatch with a small twin cam four. Timing belt, non-interference design.",
+    text:"Can attack twice each Battle Phase. Its second attack is made with 300 less ATK. Learned the mountain on delivery runs."},
+  "Tsuru Rally Sedan": {k:"monster", atk:1800, def:1200, lv:4, region:"Import", make:"Tsuru", timing:"belt-int", flaw:"crankwalk", boost:true,
+    spec:"Turbo four with all wheel drive. Timing belt, interference design. Some years are known for crank walk, where the crankshaft thrust bearing wears and the crank shifts in the block.",
+    text:"Four doors, a wing and a turbo. Fast everywhere until the bottom end moves."},
+  "Orbit Twin Rotor": {k:"monster", atk:2100, def:900, lv:5, region:"Import", make:"Orbit", timing:"none", flaw:"seals", boost:true, pierce:true,
+    spec:"Twin turbo rotary. No valves and no timing belt. Heat and worn apex seals are what end it.",
+    text:"One tribute. When it attacks a Defense Position monster and its ATK is higher than that DEF, the difference is dealt as battle damage."},
+  "Albion Roadster": {k:"monster", atk:1900, def:800, lv:3, region:"Euro", make:"Albion", timing:"chain", flaw:"electrics", flaky:true,
+    spec:"Small roadster with a pushrod four on a timing chain. The wiring is the weak point and it is famous for refusing to start.",
+    text:"Each time it declares an attack, flip a coin. Tails: it will not start and the attack never happens."},
+  "Tempesta Stradale": {k:"monster", atk:2500, def:1600, lv:6, region:"Euro", make:"Tempesta", timing:"belt-int",
+    spec:"Mid mounted V8 with timing belts and an interference design. The belt service is engine out and skipping it is how these die.",
+    text:"One tribute. The cheaper Tempesta. Nothing about owning it is cheap."},
+  "Brenner Diesel Wagon": {k:"monster", atk:1300, def:2000, lv:4, region:"Euro", make:"Brenner", timing:"chain", tough:true,
+    spec:"Diesel five cylinder on a timing chain. Known for running several times around the odometer.",
+    text:"The first time each turn it would be destroyed by battle, it is not destroyed."},
+  "Norden Brick": {k:"monster", atk:1400, def:1900, lv:4, region:"Euro", make:"Norden", timing:"belt-int", boost:true,
+    spec:"Boxy wagon with a turbo four. Timing belt, interference design. Built like a safe and it takes boost well.",
+    text:"Square wagon from the cold north. Hauls a family and still surprises people at the lights."},
+  "Parts Counter Guy": {k:"monster", atk:600, def:900, lv:2,
+    async onSummon(side){
+      const cs = G[side].deck.filter(c => c.d.equip);
+      const t = await choose(side, cs, "Order which Equip Spell from your deck?", x => x[0], false);
+      if(t){ G[side].deck.splice(G[side].deck.indexOf(t), 1); G[side].hand.push(t); shuffle(G[side].deck); log("Parts Counter Guy: " + W(side, "add") + " " + (side === "player" ? t.name : "an Equip Spell") + " from the deck to hand.", "fx"); }
+    },
+    text:"When Normal Summoned face-up: add one Equip Spell from your deck to your hand, then shuffle your deck."},
+  "Shade Tree Mechanic": {k:"monster", atk:1100, def:1300, lv:3,
+    async onSummon(side){
+      const cs = G[side].yard.filter(c => c.d.k === "spell");
+      const t = await choose(side, cs, "Salvage which Spell from your scrap yard?", x => x[x.length - 1], false);
+      if(t){ detach(t); G[side].hand.push(t); log("Shade Tree Mechanic salvages " + t.name + " from the scrap yard.", "fx"); }
+    },
+    text:"When Normal Summoned face-up: return one Spell from your scrap yard to your hand."},
+
+  "Supercharger": {k:"spell", sub:"Equip", equip:true, turbo:true, bonus:{atk:600},
+    cands: side => faceUp(side).filter(c => c.d.region === "Domestic"), ai: strongest, prompt:"Bolt the Supercharger onto which Domestic car?",
+    async resolve(){}, text:"Equip to a face-up Domestic car you control. It gains 600 ATK. It counts as forced induction, so Cooked Head Gasket can destroy it."},
+  "Close Ratio Gearbox": {k:"spell", sub:"Equip", equip:true, extraAttack:true, bonus:{atk:-300},
+    cands: side => faceUp(side).filter(c => c.d.region === "Import"), ai: strongest, prompt:"Which Import gets the gearbox?",
+    async resolve(){}, text:"Equip to a face-up Import car you control. It loses 300 ATK and can attack one additional time each Battle Phase."},
+  "Roll Cage": {k:"spell", sub:"Equip", equip:true, tough:true, bonus:{def:400},
+    cands: side => faceUp(side), ai: strongest, prompt:"Weld the Roll Cage into which monster?",
+    async resolve(){}, text:"Equip to a face-up monster you control. It gains 400 DEF. The first time each turn it would be destroyed by battle, it is not destroyed."},
+  "Autobahn Gearing": {k:"spell", sub:"Equip", equip:true, pierce:true, bonus:{atk:200},
+    cands: side => faceUp(side).filter(c => c.d.region === "Euro"), ai: strongest, prompt:"Which Euro car gets the gearing?",
+    async resolve(){}, text:"Equip to a face-up Euro car you control. It gains 200 ATK and deals piercing battle damage to Defense Position monsters."},
+
+  "Cracked Coolant Tank": {k:"trap", sub:"Normal", when:OPEN,
+    cands: side => faceUp(opp(side)).filter(c => c.d.region !== "Shop" && canTarget(c, side)),
+    ai(cs, side, ev){ return cs.find(c => c.d.flaw === "cooling") || (ev && ev.attacker && cs.includes(ev.attacker) ? ev.attacker : strongest(cs)); },
+    prompt:"Crack the coolant tank on which car?",
+    async resolve(side, t, ev){
+      if(t.d.flaw === "cooling"){ log(t.name + " dumps its coolant and is destroyed.", "trp"); destroy(t, "effect"); }
+      else { t.pos = "def"; if(ev && ev.attacker === t) ev.negated = true; log(t.name + " pulls over to cool down and switches to Defense Position.", "trp"); }
+    },
+    text:"Target one face-up car your opponent controls. If it is known for brittle plastic cooling parts, destroy it. Otherwise it pulls over and switches to Defense Position."},
+  "Known Issue": {k:"trap", sub:"Normal", when:OPEN,
+    cands: side => faceUp(opp(side)).filter(c => c.d.flaw && canTarget(c, side)),
+    ai(cs, side, ev){ return ev && ev.attacker && cs.includes(ev.attacker) ? ev.attacker : strongest(cs); },
+    prompt:"Which car has its known issue show up?",
+    async resolve(side, t){ log("The known issue shows up. " + t.name + " is destroyed.", "trp"); destroy(t, "effect"); },
+    text:"Destroy one face-up car your opponent controls that has any documented flaw."},
+  "Emissions Test": {k:"trap", sub:"Normal", when:OPEN,
+    cands: side => faceUp(opp(side)).filter(c => equipsOn(c).length > 0 && canTarget(c, side)),
+    ai(cs, side, ev){ return ev && ev.attacker && cs.includes(ev.attacker) ? ev.attacker : strongest(cs); },
+    prompt:"Which modified monster fails the test?",
+    async resolve(side, t){ log(t.name + " fails the Emissions Test and is destroyed.", "trp"); destroy(t, "effect"); },
+    text:"Destroy one face-up monster your opponent controls that has an Equip Spell attached."},
+  "Recall Notice": {k:"trap", sub:"Normal", when:OPEN,
+    cands: side => faceUp(opp(side)).filter(c => c.d.flaw && canTarget(c, side)),
+    ai(cs, side, ev){ return ev && ev.attacker && cs.includes(ev.attacker) ? ev.attacker : strongest(cs); },
+    prompt:"Recall which car?",
+    async resolve(side, t){ log(t.name + " is recalled and returns to its owner's hand.", "trp"); toHand(t); },
+    text:"Return one face-up car your opponent controls that has any documented flaw to its owner's hand."},
 };
 const SPECS = {
   "Lowrider Kid": ["Domestic", "Bannock", "chain", "Rides a Bannock boulevard cruiser. Pushrod V8 with a timing chain, so there is no belt to snap."],
@@ -463,22 +580,30 @@ for(const n in DB){
   if(sp) Object.assign(d, {region:sp[0], make:sp[1], timing:sp[2], spec:sp[3]}, sp[4] || {});
   if(!d.region) Object.assign(d, {region:"Shop", make:"", timing:"none", spec:""});
 }
+DB["Brenner Saloon"].flaw = "cooling"; DB["Brenner Sport Coupe"].flaw = "cooling"; DB["Orbit Rotary"].flaw = "seals";
+const FLAWS = {plugs:"shallow spark plug threads", gasket:"weak head gasket", cooling:"brittle plastic cooling parts", seals:"apex seal wear", crankwalk:"crank walk", electrics:"unreliable wiring"};
 const TIMING = {"chain":"Timing chain", "gear":"Gear driven timing", "belt-int":"Timing belt, interference", "belt-free":"Timing belt, non-interference", "none":""};
 
 const POOL = ["Lowrider Kid","Lowrider Kid","Drift King","Drift King","Rat Rod","Rat Rod","Nos Canister","Spare Tire","Bondo Phantom","Tuner Hatchback","Cracked Mirror","Hydraulic Ghost","Repo Runner","Curb Stomper","Piston Pete",
   "Regent Interceptor","Regent Interceptor","Swerve Argon","Swerve Argon","Tanuki Grand Six","Orbit Rotary","Brenner Saloon","Brenner Saloon",
   "Kitsune Redline","Kitsune Redline","Tanuki Kei Truck","Kuma Rally Wagon","Kuma Rally Wagon","Brenner Sport Coupe","Volta Hatch","Bannock Sleeper Wagon","Regent Gallop","Dyno Queen","Tow Truck Tony","Meter Maid",
-  "Street Legend","Nitro Demon","Impound Wraith","Brenner Express","Regent Workhorse","Bannock Sabre","Tempesta Cuneo",
+  "Bannock Squarebody","Regent Fox Coupe","Tanuki Tofu Runner","Tsuru Rally Sedan","Albion Roadster","Brenner Diesel Wagon","Norden Brick","Parts Counter Guy","Shade Tree Mechanic",
+  "Street Legend","Nitro Demon","Impound Wraith","Brenner Express","Regent Workhorse","Bannock Sabre","Tempesta Cuneo","Swerve Hellion","Orbit Twin Rotor","Tempesta Stradale",
   "Chrome Headers","Full Send Tune","Tinted Windows","Warehouse Score","Dice in the Mirror","Double Shift","Nitrous Boost","Nitrous Boost","Lowrider Hydraulics","Under the Hood","Turbo Kit","Turbo Kit","Double Stripe Package","Helicoil","Barn Find","Drag Strip","Mountain Pass","Open Highway",
-  "Track Suspension","Big Block Crate Motor","Parts Run","Flatbed","Oil Slick","Impact Wrench","Impact Wrench","Insurance Payout",
-  "Road Debris","Road Debris","Curb Check","DUI Checkpoint","Blown Gasket","Undercover Cop","Manhole Cover","Repo Notice","Blown Plug","Snapped Timing Belt","Cooked Head Gasket","Pothole","Radar Gun","Flat Tire"];
+  "Supercharger","Close Ratio Gearbox","Roll Cage","Autobahn Gearing","Track Suspension","Big Block Crate Motor","Parts Run","Flatbed","Oil Slick","Impact Wrench","Impact Wrench","Insurance Payout",
+  "Road Debris","Road Debris","Curb Check","DUI Checkpoint","Blown Gasket","Undercover Cop","Manhole Cover","Repo Notice","Blown Plug","Snapped Timing Belt","Cooked Head Gasket","Pothole","Radar Gun","Flat Tire","Cracked Coolant Tank","Known Issue","Emissions Test","Recall Notice"];
+const STARTER = ["Lowrider Kid","Drift King","Rat Rod","Nos Canister","Spare Tire","Bondo Phantom","Tuner Hatchback","Repo Runner","Regent Interceptor","Regent Interceptor","Swerve Argon","Tanuki Grand Six","Orbit Rotary","Brenner Saloon","Kitsune Redline","Kuma Rally Wagon","Tow Truck Tony","Street Legend","Nitro Demon","Bannock Sabre",
+  "Chrome Headers","Warehouse Score","Dice in the Mirror","Nitrous Boost","Nitrous Boost","Turbo Kit","Helicoil","Barn Find","Impact Wrench","Parts Run","Under the Hood","Double Shift",
+  "Road Debris","Road Debris","Flat Tire","Blown Gasket","Undercover Cop","Snapped Timing Belt","Pothole","Manhole Cover"];
+const DECK_MIN = 40, DECK_MAX = 60, COPY_MAX = 3;
 const DECK_PLAN = {small:18, big:4, spell:14, trap:8};
 function shuffle(a){ for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 /* ---------- card instances and zones ---------- */
 const FRESH = () => ({pos:"atk", faceDown:false, mods:[], attacksMade:0, extraAttackTurn:0, summonedTurn:0, posChangedTurn:0, setTurn:0, equippedTo:0, noAttackUntil:0, toughUsed:0, battleProofTurn:0, lockedBy:0, ret:null});
 function newCard(name, owner){ return Object.assign({uid:++UID, name, d:DB[name], owner}, FRESH()); }
-function buildDeck(owner){
+function buildDeck(owner, list){
+  if(list) return shuffle(list.map(n => newCard(n, owner)));
   const all = shuffle(POOL.slice()), kind = n => DB[n].k !== "monster" ? DB[n].k : DB[n].lv >= 5 ? "big" : "small";
   const names = [];
   for(const k in DECK_PLAN) names.push(...all.filter(n => kind(n) === k).slice(0, DECK_PLAN[k]));
@@ -640,7 +765,7 @@ async function changePos(side, c){
 }
 
 /* ---------- battle ---------- */
-const maxAttacks = c => (c.d.multi || 1) + (c.extraAttackTurn === G.turn ? 1 : 0);
+const maxAttacks = c => (c.d.multi || 1) + (c.extraAttackTurn === G.turn ? 1 : 0) + (equipsOn(c).some(e => e.d.extraAttack) ? 1 : 0);
 function canAttack(side, c){
   return G.active === side && G.phase === "battle" && !G.battleEnded && G.turn > 1 && !c.faceDown && c.pos === "atk" && c.attacksMade < maxAttacks(c) && c.noAttackUntil < G.turn && !isLocked(c);
 }
@@ -650,6 +775,7 @@ async function attack(side, a, t){
   const o = opp(side), sec = a.d.second;
   a.attacksMade++;
   if(side === "player") G.stats.attacks++;
+  if(a.d.flaky && Math.random() < 0.5){ log(a.name + " will not start. The attack never happens.", "fx"); render(); await sleep(500); return; }
   if(sec && a.attacksMade === 2 && sec.when === "before") addMod(a, {atk:sec.atk}, G.turn + sec.turns);
   const tl = t ? (t.faceDown ? "a face-down monster" : t.name) : "directly";
   log((side === "player" ? "Your " : "Rival's ") + a.name + " (" + atkOf(a) + ") attacks " + tl + ".", "sys");
@@ -674,7 +800,7 @@ async function attack(side, a, t){
       else { dead.push([t, a, side], [a, t, o]); }
     } else {
       const dv = defOf(t);
-      if(av > dv){ if(a.d.pierce){ log(a.name + " pierces the defense.", "fx"); damage(o, av - dv); } dead.push([t, a, side]); }
+      if(av > dv){ if(a.d.pierce || equipsOn(a).some(e => e.d.pierce)){ log(a.name + " pierces the defense.", "fx"); damage(o, av - dv); } dead.push([t, a, side]); }
       else if(av < dv){
         let dmg = dv - av;
         if(t.d.doubleWall){ dmg *= 2; log("Cracked Mirror doubles the damage.", "fx"); }
@@ -684,7 +810,7 @@ async function attack(side, a, t){
     }
     for(const [victim, killer, killerSide] of dead){
       if(victim.battleProofTurn === G.turn){ log(victim.name + " cannot be destroyed by battle this turn.", "fx"); continue; }
-      if(victim.d.tough && victim.toughUsed !== G.turn){ victim.toughUsed = G.turn; log(victim.name + " shrugs it off and is not destroyed.", "fx"); continue; }
+      if((victim.d.tough || equipsOn(victim).some(e => e.d.tough)) && victim.toughUsed !== G.turn){ victim.toughUsed = G.turn; log(victim.name + " shrugs it off and is not destroyed.", "fx"); continue; }
       log(victim.name + " is destroyed.", "dmg");
       destroy(victim);
       if(killer.d.burn){ log(killer.name + " ignites.", "fx"); damage(opp(killerSide), killer.d.burn); }
@@ -746,7 +872,7 @@ function newGame(auto){
   G = {turn:1, active:"player", phase:"draw", over:false, winner:null, busy:true, battleEnded:false, auto:!!auto, cap:auto ? 120 : 9999, lines:[], hint:null, endTurn:null, stats:{attacks:0, dealt:0, taken:0},
     player:{lp:8000, deck:[], hand:[], mon:[null,null,null,null,null], st:[null,null,null,null,null], fz:[null], yard:[], normalSummoned:false},
     enemy:{lp:8000, deck:[], hand:[], mon:[null,null,null,null,null], st:[null,null,null,null,null], fz:[null], yard:[], normalSummoned:false}};
-  G.player.deck = buildDeck("player"); G.enemy.deck = buildDeck("enemy");
+  G.player.deck = buildDeck("player", auto ? null : savedDeck()); G.enemy.deck = buildDeck("enemy");
   draw("player", 5); draw("enemy", 5);
   log("Duel start. Both sides draw 5 cards.", "sys");
   return gameLoop();
@@ -769,11 +895,12 @@ function aiWants(s, c, ev){
     if(n === "Lowrider Hydraulics") return !!t && loses && !t.faceDown;
     if(n === "Nitrous Boost") return !!t && !t.faceDown && t.pos === "atk" && av >= atkOf(t) && atkOf(t) + 800 > av;
     if(n === "Undercover Cop") return loses;
-    if(n === "Blown Plug" || n === "Snapped Timing Belt" || n === "Cooked Head Gasket") return loses && c.d.cands(s, ev).includes(a);
+    if(["Blown Plug","Snapped Timing Belt","Cooked Head Gasket","Cracked Coolant Tank","Known Issue","Emissions Test","Recall Notice"].includes(n)) return loses && c.d.cands(s, ev).includes(a);
     if(n === "Blown Gasket") return false;
   }
   if(ev.type === "open"){
-    if(n === "Blown Gasket" || n === "Cooked Head Gasket" || n === "Pothole" || n === "Impact Wrench") return true;
+    if(n === "Blown Gasket" || n === "Cooked Head Gasket" || n === "Pothole" || n === "Impact Wrench" || n === "Known Issue" || n === "Emissions Test" || n === "Recall Notice") return true;
+    if(n === "Cracked Coolant Tank") return c.d.cands(s, ev).some(m => m.d.flaw === "cooling");
     if(n === "Snapped Timing Belt") return c.d.cands(s, ev).some(m => m.d.timing === "belt-int");
     if(n === "Blown Plug") return c.d.cands(s, ev).some(m => m.d.flaw === "plugs");
     if(n === "Undercover Cop") return ev.moment === "battle" && faceUp(opp(s)).some(m => atkOf(m) >= 1500);
@@ -847,7 +974,7 @@ async function aiMain(s){
     const reg = DB[n].region, cnt = sd => faceUp(sd).filter(m => m.d.region === reg).length;
     if(cnt(s) > cnt(o)){ await aiPlay(s, n); if(G.over) return; }
   }
-  for(const n of ["Turbo Kit", "Double Stripe Package", "Big Block Crate Motor", "Track Suspension", "Chrome Headers", "Full Send Tune", "Helicoil", "Tinted Windows"]){ await aiPlay(s, n); if(G.over) return; }
+  for(const n of ["Turbo Kit", "Supercharger", "Double Stripe Package", "Autobahn Gearing", "Roll Cage", "Close Ratio Gearbox", "Big Block Crate Motor", "Track Suspension", "Chrome Headers", "Full Send Tune", "Helicoil", "Tinted Windows"]){ await aiPlay(s, n); if(G.over) return; }
   if(G.turn > 1) await aiPlay(s, "Double Shift");
   if(G.over) return;
   const oppBest = Math.max(0, ...faceUp(o).filter(c => c.pos === "atk").map(atkOf));
@@ -932,6 +1059,64 @@ function drawRecords(){
     body.appendChild(tr);
   }
 }
+function defSub(d){
+  if(d.k !== "monster") return d.sub + (d.k === "spell" ? " Spell" : " Trap");
+  return d.region + (d.make ? ", " + d.make : "") + ", Level " + d.lv + (TIMING[d.timing] ? ". " + TIMING[d.timing] : "") + (d.boost ? ". Takes boost" : "");
+}
+function defBody(d){ return d.text + (d.spec ? "\n\nUnder the hood: " + d.spec : "") + (d.flaw ? "\n\nKnown flaw: " + FLAWS[d.flaw] + "." : ""); }
+function savedDeck(){
+  let list = null;
+  try { list = JSON.parse(localStorage.getItem("carchive-deck")); } catch(e){}
+  if(!Array.isArray(list) || list.length < DECK_MIN || list.length > DECK_MAX || list.some(n => !DB[n])) return STARTER.slice();
+  return list;
+}
+let draft = {}, deckFilter = "All";
+const FILTERS = ["All", "In Deck", "Domestic", "Import", "Euro", "Shop", "Spells", "Traps"];
+const draftTotal = () => Object.values(draft).reduce((a, b) => a + b, 0);
+function passFilter(n){
+  const d = DB[n], f = deckFilter;
+  if(f === "All") return true;
+  if(f === "In Deck") return (draft[n] || 0) > 0;
+  if(f === "Spells") return d.k === "spell";
+  if(f === "Traps") return d.k === "trap";
+  return d.k === "monster" && d.region === f;
+}
+function drawDeck(){
+  const total = draftTotal(), ok = total >= DECK_MIN && total <= DECK_MAX;
+  $("deckcount").textContent = total + " cards" + (ok ? "" : total < DECK_MIN ? ", need at least " + DECK_MIN : ", limit is " + DECK_MAX);
+  $("deckcount").className = ok ? "ok" : "bad";
+  $("b-decksave").disabled = !ok;
+  const fr = $("deckfilters"); fr.innerHTML = "";
+  for(const f of FILTERS){ const b = document.createElement("button"); b.className = "chip" + (f === deckFilter ? " on" : ""); b.textContent = f; b.onclick = () => { deckFilter = f; drawDeck(); $("decklist").scrollTop = 0; }; fr.appendChild(b); }
+  const order = {monster:0, spell:1, trap:2};
+  const names = Object.keys(DB).filter(passFilter).sort((a, b) => {
+    const x = DB[a], y = DB[b];
+    if(x.k !== y.k) return order[x.k] - order[y.k];
+    if(x.k === "monster"){ if(x.region !== y.region) return x.region < y.region ? -1 : 1; if(x.lv !== y.lv) return x.lv - y.lv; }
+    return a < b ? -1 : 1;
+  });
+  const list = $("decklist"); list.innerHTML = "";
+  for(const n of names){
+    const d = DB[n], cnt = draft[n] || 0, row = document.createElement("div");
+    row.className = "drow " + d.k + (cnt ? " has" : "");
+    const info = document.createElement("div"); info.className = "dinfo";
+    const nm = document.createElement("div"); nm.className = "dn"; nm.textContent = n;
+    const mt = document.createElement("div"); mt.className = "dm";
+    mt.textContent = d.k === "monster" ? d.region + (d.make ? " " + d.make : "") + ", Lv" + d.lv + ", " + d.atk + "/" + d.def + (d.flaw ? ", flaw" : "") + (d.boost ? ", boost" : "") : defSub(d);
+    info.appendChild(nm); info.appendChild(mt);
+    info.onclick = () => openSheet({kind:"info", cancellable:true, title:n, sub:defSub(d), stats:d.k === "monster" ? d.atk + " ATK / " + d.def + " DEF" : "", body:defBody(d), buttons:[{label:"Close", cls:"quiet", value:null}]});
+    const minus = document.createElement("button"); minus.className = "pm"; minus.textContent = "-"; minus.disabled = cnt === 0;
+    minus.onclick = () => { draft[n] = cnt - 1; drawRow(); };
+    const num = document.createElement("div"); num.className = "dc"; num.textContent = cnt;
+    const plus = document.createElement("button"); plus.className = "pm"; plus.textContent = "+"; plus.disabled = cnt >= COPY_MAX;
+    plus.onclick = () => { draft[n] = cnt + 1; drawRow(); };
+    const drawRow = () => { const st = list.scrollTop; drawDeck(); $("decklist").scrollTop = st; };
+    row.appendChild(info); row.appendChild(minus); row.appendChild(num); row.appendChild(plus);
+    list.appendChild(row);
+  }
+}
+function loadDraft(names){ draft = {}; for(const n of names) draft[n] = (draft[n] || 0) + 1; }
+function deckSummary(){ $("decksum").textContent = "Current deck: " + savedDeck().length + " cards"; }
 function showOver(){
   render();
   const st = G.stats, win = G.winner === "player";
@@ -1008,11 +1193,11 @@ async function tapCard(c){
   let sub, stats = "";
   if(hidden) sub = "";
   else if(c.d.k === "monster"){
-    sub = c.d.region + (c.d.make ? ", " + c.d.make : "") + ", Level " + c.d.lv + (TIMING[c.d.timing] ? ". " + TIMING[c.d.timing] : "") + (c.d.boost ? ". Takes boost" : "");
+    sub = defSub(c.d);
     stats = (w.zone === "mon" ? atkOf(c) + " ATK / " + defOf(c) + " DEF" : c.d.atk + " ATK / " + c.d.def + " DEF");
     if(w.zone === "mon" && isLocked(c)) stats += "  (impounded)";
-  } else sub = c.d.sub + (c.d.k === "spell" ? " Spell" : " Trap");
-  let body = hidden ? "The rival's face-down card." : c.d.text + (c.d.spec ? "\n\nUnder the hood: " + c.d.spec : "");
+  } else sub = defSub(c.d);
+  let body = hidden ? "The rival's face-down card." : defBody(c.d);
   if(!hidden && c.equippedTo){ const m = byUid(c.equippedTo); if(m) body += "\n\nEquipped to " + m.name + "."; }
   if(!hidden && w.zone === "st" && w.side === "player" && c.faceDown && isFast(c) && c.setTurn === G.turn) body += "\n\nSet this turn. It can be used starting next turn.";
   const v = await openSheet({kind:"info", cancellable:true, title:hidden ? "Face-down card" : c.name, sub, stats, body,
@@ -1106,7 +1291,15 @@ if(!HEADLESS){
   const ni = $("namein");
   ni.value = store.get("carchive-name", "");
   ni.addEventListener("input", () => { ni.value = ni.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5); });
-  drawRecords();
+  drawRecords(); deckSummary();
+  $("b-deck").addEventListener("click", () => { loadDraft(savedDeck()); deckFilter = "All"; drawDeck(); $("deckscr").classList.add("show"); });
+  $("b-deckstarter").addEventListener("click", () => { loadDraft(STARTER); drawDeck(); });
+  $("b-deckclear").addEventListener("click", () => { draft = {}; drawDeck(); });
+  $("b-deckcancel").addEventListener("click", () => $("deckscr").classList.remove("show"));
+  $("b-decksave").addEventListener("click", () => {
+    const names = []; for(const n in draft) for(let i = 0; i < draft[n]; i++) names.push(n);
+    store.set("carchive-deck", names); deckSummary(); $("deckscr").classList.remove("show");
+  });
   $("b-start").addEventListener("click", () => {
     DRIVER = ni.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5) || "DRIVR";
     store.set("carchive-name", DRIVER);
